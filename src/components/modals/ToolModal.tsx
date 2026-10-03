@@ -35,6 +35,7 @@ import {
 import { ToolItem } from '../../data/toolsData';
 import { LangGoHub } from './LangGoHub';
 import { SongStudio } from '../studios/SongStudio';
+import { VoiceStudio } from '../studios/VoiceStudio';
 
 interface ToolModalProps {
   tool: ToolItem | null;
@@ -61,9 +62,9 @@ export const ToolModal: React.FC<ToolModalProps> = ({
   return (
     /* ========================================================================
        1. GLOBAL FULL-SCREEN MOBILE APP ARCHITECTURE (NO POPUP / NO FLOATING CARD)
-       Container: fixed inset-0 z-50 w-full h-full min-h-screen bg-[#06090F] overflow-y-auto pb-20
+       Container: fixed inset-0 z-50 w-full h-full min-h-screen bg-[#06090F] overflow-y-auto pb-24
        ======================================================================== */
-    <div className="fixed inset-0 z-50 w-full h-full min-h-screen bg-[#06090F] overflow-y-auto pb-20 text-slate-100 animate-in fade-in duration-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="fixed inset-0 z-50 w-full h-full min-h-screen bg-[#06090F] overflow-y-auto pb-24 text-slate-100 animate-in fade-in duration-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* Background ambient lighting */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -92,7 +93,13 @@ export const ToolModal: React.FC<ToolModalProps> = ({
             </span>
             <div className="flex items-center gap-1.5 truncate">
               <h2 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
-                {tool.id === 'langgo' ? 'LangGo · រៀនគ្រប់ភាសា' : tool.id === 'aisong' ? '🎶 AI Song & Lyric Studio' : tool.title}
+                {tool.id === 'langgo'
+                  ? 'LangGo · រៀនគ្រប់ភាសា'
+                  : tool.id === 'aivoice'
+                  ? '🎙️ AI Audio & Voice Cloning Studio'
+                  : tool.id === 'aisong'
+                  ? '🎶 AI Song & Lyric Studio'
+                  : tool.title}
               </h2>
               {tool.isVip && (
                 <span
@@ -131,6 +138,13 @@ export const ToolModal: React.FC<ToolModalProps> = ({
                 <Globe className="w-3.5 h-3.5" />
                 <span>{lang === 'en' ? 'EN' : 'ខ្មែរ'}</span>
               </button>
+            )}
+
+            {tool.id === 'aivoice' && (
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span>⚡ Studio 48kHz</span>
+              </div>
             )}
 
             {tool.id === 'aisong' && (
@@ -177,7 +191,7 @@ export const ToolModal: React.FC<ToolModalProps> = ({
           <PhotoEnhancerSandbox onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
         {tool.id === 'aivoice' && (
-          <AiVoiceSandbox onOpenVip={onOpenVip} />
+          <VoiceStudio onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
         {tool.id === 'videogenerator' && (
           <VideoGenSandbox onOpenVip={onOpenVip} isVipActive={isVipActive} />

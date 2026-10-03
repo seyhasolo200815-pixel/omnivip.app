@@ -123,40 +123,9 @@ export const SongStudio: React.FC<SongStudioProps> = ({
   const [recordedVocal, setRecordedVocal] = useState<boolean>(false);
   const [vocalScore, setVocalScore] = useState<number | null>(null);
 
-  // Audio Context synthesis references for real beat playback
-  const audioCtxRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<any>(null);
 
-  // Web Audio Synth for realistic rhythmic beat preview
-  const playSynthesizedClick = (time: number) => {
-    try {
-      if (!audioCtxRef.current) {
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        if (AudioCtx) audioCtxRef.current = new AudioCtx();
-      }
-      if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
-        audioCtxRef.current.resume();
-      }
-      if (!audioCtxRef.current || isMuted) return;
-
-      const osc = audioCtxRef.current.createOscillator();
-      const gain = audioCtxRef.current.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtxRef.current.destination);
-
-      const freq = time % 2 === 0 ? 150 : 280; // Kick or Snare pitch simulation
-      osc.frequency.setValueAtTime(freq, audioCtxRef.current.currentTime);
-      gain.gain.setValueAtTime(0.12, audioCtxRef.current.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.12);
-
-      osc.start();
-      osc.stop(audioCtxRef.current.currentTime + 0.13);
-    } catch {
-      // Audio context fallback
-    }
-  };
-
-  // Playback timer & rhythm sync
+  // Playback timer & rhythm sync (smooth silent timer counter without dummy beeps)
   useEffect(() => {
     if (isPlaying) {
       timerRef.current = setInterval(() => {
@@ -165,9 +134,7 @@ export const SongStudio: React.FC<SongStudioProps> = ({
             setIsPlaying(false);
             return 0;
           }
-          const next = prev + 1;
-          playSynthesizedClick(next);
-          return next;
+          return prev + 1;
         });
       }, 1000);
     } else {
@@ -176,7 +143,7 @@ export const SongStudio: React.FC<SongStudioProps> = ({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPlaying, selectedBeat, isMuted]);
+  }, [isPlaying, selectedBeat]);
 
   // Vocal Recording Timer simulation
   useEffect(() => {

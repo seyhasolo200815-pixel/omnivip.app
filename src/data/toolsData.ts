@@ -55,10 +55,12 @@ export const TOOLS_DATA: ToolItem[] = [
   {
     id: 'aivoice',
     num: '05',
-    title: 'AI Voice',
+    title: 'AI Voice & Cloning',
+    subtitle: 'Voice Cloning Lab',
+    khmerTitle: 'សំឡេង & ក្លូនសំឡេង AI',
     category: 'Audio',
     description: 'Hyper-realistic neural voice synthesis, studio voice cloning, and multilingual narration.',
-    badge: 'Studio',
+    badge: 'Studio 48kHz',
     accentColor: '#a855f7',
   },
   {
