@@ -925,3 +925,205 @@ export const Card10Visual: React.FC = () => {
     </div>
   );
 };
+
+/**
+ * 11. Card 11: AI Song & Lyric Studio
+ * Glowing 3D holographic musical headphones with neon soundwaves & audio equalizer bars
+ * in electric magenta (#ec4899), violet (#a855f7), and neon cyan (#06b6d4)
+ */
+export const CardSongStudioVisual: React.FC = () => {
+  return (
+    <div className="relative w-full h-36 flex items-center justify-center overflow-hidden">
+      <svg
+        viewBox="0 0 200 160"
+        className="w-full h-full max-h-36 drop-shadow-[0_0_25px_rgba(236,72,153,0.45)]"
+      >
+        <defs>
+          {/* Holographic Magenta-Violet Gradients */}
+          <linearGradient id="songHeadband" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ec4899" />
+            <stop offset="45%" stopColor="#8b5cf6" />
+            <stop offset="75%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#06b6d4" />
+          </linearGradient>
+
+          <linearGradient id="songCupMetal" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#381547" />
+            <stop offset="30%" stopColor="#831843" />
+            <stop offset="60%" stopColor="#db2777" />
+            <stop offset="85%" stopColor="#f472b6" />
+            <stop offset="100%" stopColor="#381547" />
+          </linearGradient>
+
+          <radialGradient id="cupCenterGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="40%" stopColor="#f43f5e" stopOpacity="0.8" />
+            <stop offset="80%" stopColor="#a855f7" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+          </radialGradient>
+
+          <linearGradient id="eqBarGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#06b6d4" />
+            <stop offset="40%" stopColor="#a855f7" />
+            <stop offset="80%" stopColor="#ec4899" />
+            <stop offset="100%" stopColor="#f43f5e" />
+          </linearGradient>
+
+          <radialGradient id="pedestalSong" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ec4899" stopOpacity="0.35" />
+            <stop offset="60%" stopColor="#8b5cf6" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#06090f" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* Ambient Glow Pedestal */}
+        <ellipse cx="100" cy="142" rx="72" ry="12" fill="url(#pedestalSong)" />
+        <ellipse cx="100" cy="140" rx="55" ry="8" fill="#180c2e" stroke="#ec4899" strokeWidth="1.5" strokeOpacity="0.7" />
+        <ellipse cx="100" cy="139" rx="36" ry="5" fill="#0f051d" stroke="#06b6d4" strokeWidth="1.2" strokeOpacity="0.8" />
+
+        {/* Concentric Soundwave Ripples on Floor */}
+        <ellipse cx="100" cy="140" rx="80" ry="11" fill="none" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="3 3" />
+        <ellipse cx="100" cy="140" rx="92" ry="13" fill="none" stroke="#ec4899" strokeWidth="0.8" strokeOpacity="0.2" strokeDasharray="4 4" />
+
+        {/* Equalizer Frequency Bars Background */}
+        <g opacity="0.9">
+          {/* Left Bars */}
+          <rect x="42" y="90" width="4" height="24" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="50" y="80" width="4" height="36" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="58" y="70" width="4" height="48" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="66" y="84" width="4" height="32" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="74" y="64" width="4" height="54" rx="2" fill="url(#eqBarGrad)" />
+
+          {/* Center Bars */}
+          <rect x="82" y="76" width="4" height="42" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="90" y="58" width="4" height="62" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="98" y="52" width="4" height="70" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="106" y="58" width="4" height="62" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="114" y="76" width="4" height="42" rx="2" fill="url(#eqBarGrad)" />
+
+          {/* Right Bars */}
+          <rect x="122" y="64" width="4" height="54" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="130" y="84" width="4" height="32" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="138" y="70" width="4" height="48" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="146" y="80" width="4" height="36" rx="2" fill="url(#eqBarGrad)" />
+          <rect x="154" y="90" width="4" height="24" rx="2" fill="url(#eqBarGrad)" />
+        </g>
+
+        {/* Floating Musical Notes with Neon Glow */}
+        <g fill="#ec4899" opacity="0.85" filter="drop-shadow(0 0 6px #f43f5e)">
+          {/* Note 1 (Left Top) */}
+          <g transform="translate(30, 42) scale(0.9)">
+            <ellipse cx="6" cy="14" rx="4.5" ry="3.5" transform="rotate(-20 6 14)" />
+            <rect x="8" y="3" width="2" height="12" />
+            <path d="M 10 3 C 14 3, 16 7, 18 10 L 18 7 C 16 4, 14 2, 10 2 Z" />
+          </g>
+
+          {/* Note 2 (Right Top Double Note) */}
+          <g transform="translate(155, 36) scale(0.95)">
+            <ellipse cx="6" cy="14" rx="4.5" ry="3.5" transform="rotate(-20 6 14)" />
+            <ellipse cx="18" cy="12" rx="4.5" ry="3.5" transform="rotate(-20 18 12)" />
+            <rect x="8.5" y="3" width="2" height="12" />
+            <rect x="20.5" y="1" width="2" height="12" />
+            <polygon points="8.5,3 22.5,1 22.5,4.5 8.5,6.5" fill="#f43f5e" />
+          </g>
+
+          {/* Note 3 (Center Top Small) */}
+          <g transform="translate(95, 20) scale(0.75)">
+            <ellipse cx="6" cy="14" rx="4" ry="3" transform="rotate(-20 6 14)" fill="#06b6d4" />
+            <rect x="8" y="4" width="1.8" height="11" fill="#06b6d4" />
+          </g>
+        </g>
+
+        {/* 3D Holographic Musical Headphones */}
+        <g filter="drop-shadow(0 0 16px rgba(236,72,153,0.65))">
+          {/* Arching Headband */}
+          <path
+            d="M 52 90 C 52 42, 70 24, 100 24 C 130 24, 148 42, 148 90"
+            fill="none"
+            stroke="url(#songHeadband)"
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
+          {/* Inner Cushion Arch */}
+          <path
+            d="M 58 88 C 58 48, 74 32, 100 32 C 126 32, 142 48, 142 88"
+            fill="none"
+            stroke="#1e1035"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          {/* Metallic Headband Top Highlight */}
+          <path
+            d="M 72 38 C 84 30, 116 30, 128 38"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="2"
+            strokeOpacity="0.7"
+            strokeLinecap="round"
+          />
+
+          {/* Left Earcup Assembly */}
+          <g transform="translate(40, 74)">
+            {/* Swivel Pivot */}
+            <rect x="8" y="0" width="8" height="12" rx="3" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+            {/* Outer Ear Cup Shell */}
+            <ellipse cx="12" cy="24" rx="14" ry="22" fill="url(#songCupMetal)" stroke="#ec4899" strokeWidth="2" />
+            {/* Glowing Neon Ring */}
+            <ellipse cx="12" cy="24" rx="9" ry="16" fill="#0f051d" stroke="#06b6d4" strokeWidth="2" filter="drop-shadow(0 0 6px #06b6d4)" />
+            {/* Center Core Glowing Orb */}
+            <circle cx="12" cy="24" r="6" fill="url(#cupCenterGlow)" />
+            {/* Soft Ear Cushion */}
+            <path
+              d="M 19 8 C 25 14, 25 34, 19 40"
+              fill="none"
+              stroke="#0f172a"
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+          </g>
+
+          {/* Right Earcup Assembly */}
+          <g transform="translate(136, 74)">
+            {/* Swivel Pivot */}
+            <rect x="8" y="0" width="8" height="12" rx="3" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+            {/* Outer Ear Cup Shell */}
+            <ellipse cx="12" cy="24" rx="14" ry="22" fill="url(#songCupMetal)" stroke="#ec4899" strokeWidth="2" />
+            {/* Glowing Neon Ring */}
+            <ellipse cx="12" cy="24" rx="9" ry="16" fill="#0f051d" stroke="#06b6d4" strokeWidth="2" filter="drop-shadow(0 0 6px #06b6d4)" />
+            {/* Center Core Glowing Orb */}
+            <circle cx="12" cy="24" r="6" fill="url(#cupCenterGlow)" />
+            {/* Soft Ear Cushion */}
+            <path
+              d="M 5 8 C -1 14, -1 34, 5 40"
+              fill="none"
+              stroke="#0f172a"
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+          </g>
+        </g>
+
+        {/* Dynamic Curved Audio Beams radiating from Headphone */}
+        <path
+          d="M 32 94 C 18 90, 8 102, 2 115"
+          fill="none"
+          stroke="#ec4899"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray="2 3"
+          opacity="0.8"
+        />
+        <path
+          d="M 168 94 C 182 90, 192 102, 198 115"
+          fill="none"
+          stroke="#06b6d4"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray="2 3"
+          opacity="0.8"
+        />
+      </svg>
+    </div>
+  );
+};
+

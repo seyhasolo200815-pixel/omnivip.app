@@ -107,4 +107,16 @@ export const TOOLS_DATA: ToolItem[] = [
     isVip: true,
     accentColor: '#eab308',
   },
+  {
+    id: 'aisong',
+    num: '11',
+    title: 'បង្កើតចម្រៀង (AI Song Studio)',
+    subtitle: 'Upload Beat → AI Generates Lyrics to Match Rhythm & Flow',
+    khmerTitle: 'បង្កើតចម្រៀង & ទំនុកច្រៀង',
+    category: 'Audio',
+    description: 'Upload instrumental beat, detect BPM & key, and generate rhymed lyrics synchronized with musical flow.',
+    badge: '🔥 Super Feature',
+    accentColor: '#ec4899',
+    hasCyanRim: true,
+  },
 ];

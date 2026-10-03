@@ -12,6 +12,7 @@ import {
   Card08Visual,
   Card09Visual,
   Card10Visual,
+  CardSongStudioVisual,
 } from './CardVisuals';
 
 interface ToolCardProps {
@@ -49,6 +50,8 @@ export const ToolCard: React.FC<ToolCardProps> = ({
         return <Card09Visual />;
       case 'cvbuilder':
         return <Card10Visual />;
+      case 'aisong':
+        return <CardSongStudioVisual />;
       default:
         return <Card01Visual />;
     }
@@ -67,14 +70,23 @@ export const ToolCard: React.FC<ToolCardProps> = ({
       className={`group relative flex flex-col justify-between rounded-2xl overflow-hidden cursor-pointer select-none transition-all duration-300 active:scale-[0.98] ${
         isCard01
           ? 'border-[1.5px] border-[#00d2ff] shadow-[0_0_25px_rgba(0,210,255,0.45),inset_0_0_15px_rgba(0,210,255,0.18)]'
+          : tool.id === 'aisong'
+          ? 'border-[1.5px] border-pink-500/60 hover:border-pink-400 shadow-[0_0_25px_rgba(236,72,153,0.35),inset_0_0_15px_rgba(236,72,153,0.12)]'
           : 'border border-white/10 hover:border-slate-600/70 shadow-[0_8px_30px_rgba(0,0,0,0.5)]'
       }`}
     >
       {/* Top Bar with Number & Favorite Star */}
       <div className="relative z-10 flex items-center justify-between px-3 pt-2.5 pb-1">
-        <span className="text-[11px] font-mono font-medium text-slate-300 tracking-wider">
-          {tool.num}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-mono font-medium text-slate-300 tracking-wider">
+            {tool.num}
+          </span>
+          {tool.id === 'aisong' && (
+            <span className="px-1.5 py-0.2 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/40 text-[9px] font-bold">
+              🔥 Super Feature
+            </span>
+          )}
+        </div>
         <button
           onClick={(e) => onToggleFavorite(tool.id, e)}
           type="button"
@@ -107,6 +119,15 @@ export const ToolCard: React.FC<ToolCardProps> = ({
             {/* English Subtitle */}
             <span className="text-[11px] font-medium text-cyan-300 tracking-tight mt-0.5 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">
               {tool.subtitle || 'LangGo'}
+            </span>
+          </div>
+        ) : tool.id === 'aisong' ? (
+          <div className="flex flex-col items-center justify-center">
+            <span className="font-khmer text-sm font-bold text-white tracking-wide leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+              {tool.khmerTitle || 'បង្កើតចម្រៀង'}
+            </span>
+            <span className="text-[10.5px] font-medium text-pink-300 tracking-tight mt-0.5 drop-shadow-[0_0_8px_rgba(236,72,153,0.6)] truncate max-w-[150px]">
+              AI Song Studio
             </span>
           </div>
         ) : (

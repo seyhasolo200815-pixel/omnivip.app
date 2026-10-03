@@ -114,12 +114,14 @@ export default function App() {
         <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {/* 5. Tool Interactive Studio Modal */}
+      {/* 5. Tool Full-Screen Mobile App Architecture */}
       <ToolModal
         tool={selectedTool}
         onClose={() => setSelectedTool(null)}
         onOpenVip={() => setIsVipModalOpen(true)}
         isVipActive={isVipActive}
+        lang={lang}
+        onToggleLang={handleToggleLang}
       />
 
       {/* 6. Luxury VIP Pro Modal */}
