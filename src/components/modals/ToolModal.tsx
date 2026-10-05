@@ -36,6 +36,8 @@ import { ToolItem } from '../../data/toolsData';
 import { LangGoHub } from './LangGoHub';
 import { SongStudio } from '../studios/SongStudio';
 import { VoiceStudio } from '../studios/VoiceStudio';
+import { FluxImageStudio } from '../studios/FluxImageStudio';
+import { KChatStudio } from '../studios/KChatStudio';
 
 interface ToolModalProps {
   tool: ToolItem | null;
@@ -95,6 +97,8 @@ export const ToolModal: React.FC<ToolModalProps> = ({
               <h2 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
                 {tool.id === 'langgo'
                   ? 'LangGo · រៀនគ្រប់ភាសា'
+                  : tool.num === '04' || tool.id === 'imagestudio'
+                  ? '🎨 Module 04: AI Image Generation Studio'
                   : tool.id === 'aivoice'
                   ? '🎙️ AI Audio & Voice Cloning Studio'
                   : tool.id === 'aisong'
@@ -140,6 +144,13 @@ export const ToolModal: React.FC<ToolModalProps> = ({
               </button>
             )}
 
+            {(tool.num === '04' || tool.id === 'imagestudio') && (
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-mono font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                <span>⚡ FLUX.1 Engine (Free)</span>
+              </div>
+            )}
+
             {tool.id === 'aivoice' && (
               <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
@@ -182,12 +193,12 @@ export const ToolModal: React.FC<ToolModalProps> = ({
           <LangGoHub onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
         {tool.id === 'kchat' && (
-          <KChatSandbox clearTrigger={chatClearTrigger} onOpenVip={onOpenVip} />
+          <KChatStudio onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
-        {tool.id === 'imagestudio' && (
-          <ImageStudioSandbox onOpenVip={onOpenVip} isVipActive={isVipActive} />
+        {(tool.num === '04' || tool.id === 'imagestudio') && (
+          <FluxImageStudio onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
-        {tool.id === 'photoenhancer' && (
+        {tool.id === 'photoenhancer' && tool.num !== '04' && (
           <PhotoEnhancerSandbox onOpenVip={onOpenVip} isVipActive={isVipActive} />
         )}
         {tool.id === 'aivoice' && (
