@@ -14,12 +14,8 @@ function superAiPlugin() {
             const userMessage = parsed.message || url.searchParams.get('message') || '';
             const history = Array.isArray(parsed.history) ? parsed.history : [];
 
-            const MASTER_SYSTEM = `You are K-Chat Super AI, the flagship intelligence of OmniAI. You possess supreme mastery in:
-1. Advanced Khmer Literature: Traditional poetry (បទពាក្យ៧, កាកគតិ, ព្រហ្មគីតិ), deep philosophical analysis, and flawless Khmer grammar.
-2. Software Architecture & Engineering: Full-stack coding, debugging, algorithmic optimization, and system design.
-3. Mathematics & Logic: Complex multi-step reasoning, calculations, and analytical proofs.
-4. Global Knowledge: History, economics, science, and technology.
-Rule: Never mention other companies (Gemini, Google, OpenAI). Answer directly, thoroughly, and fluently in polite Khmer and multilingual contexts.`;
+            const MASTER_SYSTEM = `You are K-Chat AI. Provide text-only and code-only responses. 
+NEVER output any images, markdown images (![...](...)), HTML img tags, or links under any circumstances, even if joking. STRICTLY TEXT ONLY.`;
 
             const historyText = history
               .slice(-6)
@@ -30,6 +26,25 @@ Rule: Never mention other companies (Gemini, Google, OpenAI). Answer directly, t
 
             const { GoogleGenAI } = await import('@google/genai');
             const ai = new GoogleGenAI();
+
+            if (parsed.stream || url.searchParams.get('stream') === 'true') {
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+              res.setHeader('Transfer-Encoding', 'chunked');
+              res.setHeader('Cache-Control', 'no-cache');
+              const stream = await ai.models.generateContentStream({
+                model: 'gemini-3.1-flash-lite',
+                contents: prompt,
+              });
+              for await (const chunk of stream) {
+                if (chunk.text) {
+                  res.write(chunk.text);
+                }
+              }
+              res.end();
+              return;
+            }
+
             const response = await ai.models.generateContent({
               model: 'gemini-3.1-flash-lite',
               contents: prompt,

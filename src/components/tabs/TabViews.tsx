@@ -87,8 +87,13 @@ export const ToolsDirectoryTab: React.FC<{
                 <div>
                   <div className="flex items-center gap-1.5">
                     <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
-                      {tool.id === 'langgo' ? 'រៀនគ្រប់ភាសា (LangGo)' : tool.title}
+                      {tool.title}
                     </h4>
+                    {tool.khmerSubLabel && (
+                      <span className="text-[11px] text-gray-400 font-khmer">
+                        · {tool.khmerSubLabel}
+                      </span>
+                    )}
                     {tool.badge && (
                       <span className="text-[9px] px-1.5 py-0.2 rounded bg-cyan-950/60 text-cyan-400 border border-cyan-800/60">
                         {tool.badge}

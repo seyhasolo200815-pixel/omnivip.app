@@ -33,12 +33,8 @@ interface KChatStudioProps {
   isVipActive?: boolean;
 }
 
-const MASTER_SYSTEM_PROMPT = `You are K-Chat Super AI, the flagship intelligence of OmniAI. You possess supreme mastery in:
-1. Advanced Khmer Literature: Traditional poetry (បទពាក្យ៧, កាកគតិ, ព្រហ្មគីតិ), deep philosophical analysis, and flawless Khmer grammar.
-2. Software Architecture & Engineering: Full-stack coding, debugging, algorithmic optimization, and system design.
-3. Mathematics & Logic: Complex multi-step reasoning, calculations, and analytical proofs.
-4. Global Knowledge: History, economics, science, and technology.
-Rule: Never mention other companies (Gemini, Google, OpenAI). Answer directly, thoroughly, and fluently in polite Khmer and multilingual contexts.`;
+const MASTER_SYSTEM_PROMPT = `You are K-Chat AI. Provide text-only and code-only responses. 
+NEVER output any images, markdown images (![...](...)), HTML img tags, or links under any circumstances, even if joking. STRICTLY TEXT ONLY.`;
 
 export const KChatStudio: React.FC<KChatStudioProps> = ({
   onOpenVip,
@@ -48,16 +44,9 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
     {
       id: 'welcome-1',
       sender: 'assistant',
-      text: `ជំរាបសួរ! ខ្ញុំបាទគឺ **K-Chat Super AI** បញ្ញាសិប្បនិម្មិតកំពូល (Flagship Intelligence) របស់ **OmniAI**។ 🚀
+      text: `សួស្តីបងប្អូនទាំងអស់គ្នា! ខ្ញុំគឺ **K-Chat AI** បញ្ញាសិប្បនិម្មិតកម្រិតខ្ពស់ឆ្លើយតបជាអក្សរ និងកូដសុទ្ធសាធ (Text-Only & Code-Only)។
 
-ខ្ញុំមានសមត្ថភាពជាន់ខ្ពស់បំផុតក្នុងការ៖
-* 📜 **អក្សរសាស្ត្រខ្មែរ & កំណាព្យបុរាណ** (បទពាក្យ៧, កាកគតិ, ព្រហ្មគីតិ, ពាក្យ៨, វិភាគទស្សនវិជ្ជា)
-* 💻 **ស្ថាបត្យកម្មប្រព័ន្ធ & វិស្វកម្មសូហ្វវែរ** (Full-Stack Architecture, Algorithm Optimization, Debugging)
-* 🧮 **គណិតវិទ្យា & ការគិតហេតុផលស៊ីជម្រៅ (Multi-step Reasoning & Proofs)**
-* 🌐 **ចំណេះដឹងសកល ប្រវត្តិសាស្ត្រ & សេដ្ឋកិច្ច**
-* 🧠 **ចងចាំបរិបទការសន្ទនាយ៉ាងច្បាស់លាស់ (Context History)**
-
-តើថ្ងៃនេះលោកអ្នកចង់ឱ្យខ្ញុំជួយដោះស្រាយ ឬស្រាវជ្រាវប្រធានបទអ្វីដែរ?`,
+តើថ្ងៃនេះលោកអ្នកចង់ឱ្យខ្ញុំជួយដោះស្រាយលំហាត់ សរសេរកូដ រៀបចំគម្រោង ឬពិភាក្សាប្រធានបទអ្វីដែរ?`,
       time: 'Just now',
       isStreaming: false,
     },
@@ -98,75 +87,55 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
   }, []);
 
   // Smart Voice Player (Auto-detect Khmer vs English)
-  const playSmartVoice = (messageId: string, rawText: string) => {
-    // If currently speaking this message, stop audio
+  const playSmartVoice = (rawText: string, messageId?: string) => {
     if (currentVoiceAudioRef.current) {
       currentVoiceAudioRef.current.pause();
       currentVoiceAudioRef.current = null;
-      if (speakingMsgId === messageId) {
-        setSpeakingMsgId(null);
-        return;
-      }
-    }
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      setSpeakingMsgId(null);
+      return;
     }
 
-    const cleanText = rawText.replace(/[*#`_~[\]()]/g, '').trim().slice(0, 200);
+    // Strip Markdown symbols, image markdown ![alt](url), etc.
+    const cleanText = rawText
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/[*#`_~[\]()]/g, '')
+      .trim()
+      .slice(0, 200);
     if (!cleanText) return;
 
-    // បើមានតួអក្សរខ្មែរ ប្រើ tl=km បើគ្មានទេ ប្រើ tl=en (សំឡេងអង់គ្លេស)
+    // Auto-detect Khmer vs English
     const isKhmer = /[\u1780-\u17FF]/.test(cleanText);
     const langCode = isKhmer ? 'km' : 'en';
 
-    setSpeakingMsgId(messageId);
-
-    const fallbackSpeechSynthesis = () => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = isKhmer ? 'km-KH' : 'en-US';
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.onend = () => setSpeakingMsgId(null);
-        utterance.onerror = () => setSpeakingMsgId(null);
-        window.speechSynthesis.speak(utterance);
-      } else {
-        setSpeakingMsgId(null);
-      }
-    };
-
-    // Dedicated backend proxy URL for high-fidelity Google Translate TTS audio
+    const voiceUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${langCode}&client=tw-ob`;
     const proxyVoiceUrl = `/api/tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${langCode}&client=tw-ob`;
 
-    // Fetch as blob to guarantee cross-origin playback & prevent 'no supported source found' in iframes
-    fetch(proxyVoiceUrl)
-      .then(async (response) => {
-        if (!response.ok) throw new Error('Audio proxy unavailable');
-        const blob = await response.blob();
-        if (blob.size === 0) throw new Error('Empty audio stream');
+    if (messageId) {
+      setSpeakingMsgId(messageId);
+    }
 
-        const audioBlobUrl = URL.createObjectURL(blob);
-        const audio = new Audio(audioBlobUrl);
-        currentVoiceAudioRef.current = audio;
+    const audio = new Audio(proxyVoiceUrl);
+    currentVoiceAudioRef.current = audio;
 
-        audio.onended = () => {
-          URL.revokeObjectURL(audioBlobUrl);
-          currentVoiceAudioRef.current = null;
-          setSpeakingMsgId(null);
-        };
-
-        audio.onerror = () => {
-          URL.revokeObjectURL(audioBlobUrl);
-          currentVoiceAudioRef.current = null;
-          fallbackSpeechSynthesis();
-        };
-
-        await audio.play();
-      })
-      .catch(() => {
-        fallbackSpeechSynthesis();
+    audio.play().catch(() => {
+      // Fallback to direct voiceUrl
+      const directAudio = new Audio(voiceUrl);
+      currentVoiceAudioRef.current = directAudio;
+      directAudio.play().catch((err) => {
+        console.error('Playback error:', err);
+        currentVoiceAudioRef.current = null;
+        setSpeakingMsgId(null);
       });
+      directAudio.onended = () => {
+        currentVoiceAudioRef.current = null;
+        setSpeakingMsgId(null);
+      };
+    });
+
+    audio.onended = () => {
+      currentVoiceAudioRef.current = null;
+      setSpeakingMsgId(null);
+    };
   };
 
   // Quick Prompt Pills
@@ -194,111 +163,138 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
   ];
 
   // ==========================================
-  // OMNI-INTELLIGENT SUPER AI ENGINE (CALL SUPER AI)
-  // Supports Context History (Previous 6 Messages) & Zero-Cost Multi-Model Power Core
+  // HIGH-PERFORMANCE BRAIN & JSON-LEAK ELIMINATION
+  // DeepSeek-R1 with automatic fallback to OpenAI-Large
   // ==========================================
-  const callSuperAI = async (
-    chatHistory: KChatMessage[],
-    userMessage: string
-  ): Promise<string> => {
-    // Filter valid historical dialog and extract previous 6 messages for context continuity
-    const historyPayload = chatHistory
-      .filter((m) => m.text && !m.isStreaming && m.id !== 'welcome-1')
-      .slice(-6)
-      .map((m) => ({
-        role: m.sender === 'user' ? 'user' : 'assistant',
-        content: m.text,
-      }));
+  const sanitizeAIText = (raw: string): string => {
+    if (!raw || typeof raw !== 'string') return '';
+    let cleaned = raw.trim();
 
-    // Tier 1: High-Speed Super AI Server Proxy (Gemini 3.1 Flash Lite Tier, < 1s, Zero Cost)
-    try {
-      const serverRes = await fetch('/api/super-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMessage,
-          history: historyPayload,
-        }),
-      });
-
-      if (serverRes.ok) {
-        const data = await serverRes.json();
-        if (data && data.text && data.text.trim()) {
-          return data.text.trim();
-        }
-      }
-    } catch (err) {
-      console.warn('Super AI server proxy failed, trying Pollinations fallback:', err);
+    // If raw response is wrapped in JSON format
+    if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(cleaned);
+        if (parsed.text && typeof parsed.text === 'string') return parsed.text.trim();
+        if (parsed.choices?.[0]?.message?.content) return parsed.choices[0].message.content.trim();
+        if (parsed.choices?.[0]?.text) return parsed.choices[0].text.trim();
+        if (parsed.error) return '';
+      } catch (_) {}
     }
 
-    // Tier 2: Pollinations Multi-Model Core
-    const systemMessage = {
+    // Strip out stray SSE artifacts if any
+    cleaned = cleaned.replace(/^data:\s*\{.*?\}\s*$/gm, '');
+    cleaned = cleaned.replace(/^data:\s*\[DONE\]\s*$/gm, '');
+    cleaned = cleaned.replace(/^data:\s*/gm, '');
+
+    // Completely strip any markdown images, HTML img tags, or image URLs
+    cleaned = cleaned.replace(/!\[.*?\]\(.*?\)/g, '');
+    cleaned = cleaned.replace(/<img[^>]*>/gi, '');
+
+    return cleaned.trim();
+  };
+
+  const fetchKChatAI = async (
+    userPrompt: string,
+    chatHistory: KChatMessage[]
+  ): Promise<string> => {
+    const systemInstruction = {
       role: 'system',
-      content: MASTER_SYSTEM_PROMPT,
+      content:
+        'You are K-Chat AI. Provide text-only and code-only responses.\nNEVER output any images, markdown images (![...](...)), HTML img tags, or links under any circumstances, even if joking. STRICTLY TEXT ONLY.',
     };
 
-    const payloadMessages = [
-      systemMessage,
-      ...historyPayload,
-      { role: 'user', content: userMessage },
-    ];
+    const payload = {
+      messages: [
+        systemInstruction,
+        ...chatHistory
+          .slice(-6)
+          .map((m) => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text })),
+        { role: 'user', content: userPrompt },
+      ],
+      model: 'deepseek-r1',
+      seed: Math.floor(Math.random() * 1000000),
+    };
 
-    const candidateModels = ['openai', 'openai-fast', 'openai-large'];
+    try {
+      const res = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    for (const modelCandidate of candidateModels) {
+      if (!res.ok) throw new Error('Switch to fallback');
+      const text = await res.text();
+      const cleaned = sanitizeAIText(text);
+      if (cleaned && !cleaned.includes('"status":404') && !cleaned.includes('"status":402')) {
+        return cleaned;
+      }
+      throw new Error('Switch to fallback');
+    } catch {
+      // Ultra-fast reliable fallback to openai-large
       try {
-        const response = await fetch('https://text.pollinations.ai/', {
+        const fallbackRes = await fetch('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: payloadMessages,
-            model: modelCandidate,
-            seed: Math.floor(Math.random() * 1000000),
-            jsonMode: false,
-          }),
+          body: JSON.stringify({ ...payload, model: 'openai-large' }),
         });
 
-        if (response.ok) {
-          const text = await response.text();
+        if (fallbackRes.ok) {
+          const fbText = await fallbackRes.text();
+          const fbCleaned = sanitizeAIText(fbText);
           if (
-            text &&
-            text.trim() &&
-            text.trim() !== '{}' &&
-            !text.includes('"status":404') &&
-            !text.includes('"status":402')
+            fbCleaned &&
+            !fbCleaned.includes('"status":404') &&
+            !fbCleaned.includes('"status":402')
           ) {
-            return text.trim();
+            return fbCleaned;
           }
         }
       } catch (err) {
-        console.warn(`Model ${modelCandidate} failed:`, err);
+        console.warn('openai-large fallback issue:', err);
       }
-    }
 
-    // Tier 3: GET Fallback
-    try {
-      const dialogHistory = payloadMessages
-        .slice(-5)
-        .map((p) => `${p.role === 'user' ? 'User' : 'Assistant'}: ${p.content}`)
-        .join('\n\n');
+      // Tier 3: Zero-lag Server Proxy (Gemini 3.1 Flash Lite Cambodian Super-Intelligence)
+      try {
+        const serverRes = await fetch('/api/super-ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: userPrompt,
+            history: chatHistory.slice(-6).map((m) => ({
+              role: m.sender === 'user' ? 'user' : 'assistant',
+              content: m.text,
+            })),
+          }),
+        });
 
-      const fallbackUrl = `https://text.pollinations.ai/${encodeURIComponent(
-        `${MASTER_SYSTEM_PROMPT}\n\nRecent History:\n${dialogHistory}\n\nAssistant:`
-      )}?model=openai&seed=${Math.floor(Math.random() * 1000000)}`;
-
-      const fallbackRes = await fetch(fallbackUrl);
-      if (fallbackRes.ok) {
-        const text = await fallbackRes.text();
-        if (text && text.trim() && text.trim() !== '{}') {
-          return text.trim();
+        if (serverRes.ok) {
+          const srvData = await serverRes.json();
+          if (srvData && srvData.text) {
+            return srvData.text.trim();
+          }
         }
+      } catch (srvErr) {
+        console.warn('Server proxy fallback issue:', srvErr);
       }
-    } catch (e) {
-      console.warn('Pollinations GET fallback failed:', e);
-    }
 
-    // Graceful fallback response in Khmer
-    return `សូមអភ័យទោស ប្រព័ន្ធកំពុងមមាញឹកបន្តិចនៅពេលនេះ។ សូមលោកអ្នកសាកល្បងចុចផ្ញើសារម្ដងទៀត!`;
+      // Tier 4: Pollinations openai-fast backup
+      try {
+        const fastRes = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, model: 'openai-fast' }),
+        });
+        if (fastRes.ok) {
+          const fastText = await fastRes.text();
+          const fastCleaned = sanitizeAIText(fastText);
+          if (fastCleaned) return fastCleaned;
+        }
+      } catch (fastErr) {
+        console.warn('openai-fast backup issue:', fastErr);
+      }
+
+      return 'សូមអភ័យទោស ប្រព័ន្ធកំពុងដំណើរការមមាញឹកបន្តិច។ សូមលោកអ្នកសាកល្បងចុចផ្ញើសារម្ដងទៀត!';
+    }
   };
 
   const handleSend = async (customText?: string) => {
@@ -341,10 +337,15 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
     setMessages([...updatedMessages, placeholderMessage]);
 
     try {
-      // Call Super AI with full 6-message historical context
-      const fullReply = await callSuperAI(updatedMessages, textToSend.trim());
+      const validHistory = updatedMessages.filter(
+        (m) => m.text && !m.isStreaming && m.id !== 'welcome-1'
+      );
 
-      // Real-time chunked streaming delivery (4 characters every 10ms for smooth live effect)
+      // Fetch clean text with JSON leak elimination
+      const rawReply = await fetchKChatAI(textToSend.trim(), validHistory);
+      const fullReply = sanitizeAIText(rawReply) || rawReply;
+
+      // Smooth real-time typewriter delivery (4 chars every 10ms - zero JSON leakage)
       let charIdx = 0;
       const step = 4;
       const streamTimer = setInterval(() => {
@@ -383,7 +384,6 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
       }, 10);
     } catch (err) {
       console.error('K-Chat live connection error:', err);
-      // Clean, genuine error notice without echoing or mocking user prompt
       const errorNotice = `⚠️ មិនអាចទាញយកចម្លើយពីប្រព័ន្ធ AI បានទេនៅពេលនេះ។ សូមពិនិត្យការតភ្ជាប់អ៊ីនធឺណិត ហើយសាកល្បងម្ដងទៀត!`;
       setMessages((prev) =>
         prev.map((m) =>
@@ -599,11 +599,11 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
                 </h2>
                 <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                  <span>Flagship Tier · OmniAI</span>
+                  <span>Text & Code Only · DeepSeek-R1 Brain</span>
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
-                ចងចាំបរិបទ ៦ សារ · អក្សរសាស្ត្រខ្មែរ កំណាព្យ & វិស្វកម្មកូដកម្រិតកំពូល
+                ឆ្លើយតបជាអក្សរ & កូដសុទ្ធសាធ (Strictly Text-Only) · គណិតវិទ្យា & វិស្វកម្មសូហ្វវែរ
               </p>
             </div>
           </div>
@@ -695,7 +695,7 @@ export const KChatStudio: React.FC<KChatStudioProps> = ({
                       {/* Glassmorphism Speaker / Read Aloud Action Button */}
                       <button
                         type="button"
-                        onClick={() => playSmartVoice(m.id, m.text)}
+                        onClick={() => playSmartVoice(m.text, m.id)}
                         className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border transition-all active:scale-95 ${
                           speakingMsgId === m.id
                             ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/60 shadow-[0_0_15px_rgba(6,182,212,0.4)] animate-pulse'

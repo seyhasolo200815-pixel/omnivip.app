@@ -109,30 +109,13 @@ export const ToolCard: React.FC<ToolCardProps> = ({
       </div>
 
       {/* Bottom Label Area */}
-      <div className="relative z-10 px-2 pb-3 pt-1 text-center">
-        {isCard01 ? (
-          <div className="flex flex-col items-center justify-center">
-            {/* Khmer Text */}
-            <span className="font-khmer text-sm font-medium text-white tracking-wide leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
-              {tool.khmerTitle || 'រៀនគ្រប់ភាសា'}
-            </span>
-            {/* English Subtitle */}
-            <span className="text-[11px] font-medium text-cyan-300 tracking-tight mt-0.5 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">
-              {tool.subtitle || 'LangGo'}
-            </span>
-          </div>
-        ) : tool.id === 'aisong' ? (
-          <div className="flex flex-col items-center justify-center">
-            <span className="font-khmer text-sm font-bold text-white tracking-wide leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
-              {tool.khmerTitle || 'បង្កើតចម្រៀង'}
-            </span>
-            <span className="text-[10.5px] font-medium text-pink-300 tracking-tight mt-0.5 drop-shadow-[0_0_8px_rgba(236,72,153,0.6)] truncate max-w-[150px]">
-              AI Song Studio
-            </span>
-          </div>
-        ) : (
-          <span className="text-[13px] font-semibold text-slate-100 tracking-tight leading-tight block drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
-            {tool.title}
+      <div className="relative z-10 px-2 pb-3 pt-1 text-center flex flex-col items-center justify-center">
+        <span className="text-[13px] font-semibold text-slate-100 tracking-tight leading-tight block drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
+          {tool.title}
+        </span>
+        {tool.khmerSubLabel && (
+          <span className="text-xs text-gray-400 font-khmer block mt-0.5 leading-tight">
+            {tool.khmerSubLabel}
           </span>
         )}
       </div>
